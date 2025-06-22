@@ -1,0 +1,131 @@
+#+TITLE: systemd-manager.el
+#+AUTHOR: nineluj
+#+EMAIL: code@nineluj.com
+
+An Emacs interface for managing systemd units. This package provides a convenient way to view, control, and monitor systemd services from within Emacs.
+
+** Features
+
+- 📋 View system and user units in a tabulated list interface
+- 🚀 Start, stop, and restart systemd units
+- ⚙️ Enable and disable units
+- 📝 View unit logs in real-time
+- 📄 Open unit configuration files for editing
+- 🔄 Toggle between system and user units
+- 🎨 Syntax highlighting for unit status
+- ⚡ Interactive transient menu for quick actions
+
+** Installation
+
+*** Manual Installation
+
+1. Clone this repository:
+   #+begin_src shell
+   git clone https://github.com/nineluj/systemd-manager.el.git
+   #+end_src
+
+2. Add the directory to your Emacs load path:
+   #+begin_src emacs-lisp
+   (add-to-list 'load-path "/path/to/systemd-manager.el")
+   (require 'systemd-manager)
+   #+end_src
+
+*** Package Manager
+
+This package is not yet available on MELPA, but you can install it using package managers like =straight.el=:
+
+#+begin_src emacs-lisp
+(use-package systemd-manager
+  :straight (:host github :repo "nineluj/emacs-systemd-manager.el"))
+#+end_src
+
+** Usage
+
+*** Basic Usage
+
+Launch the systemd manager interface:
+
+#+begin_src emacs-lisp
+M-x systemd-manager
+#+end_src
+
+This will open a buffer showing all systemd units with their current status.
+
+*** Key Bindings
+
+In the systemd-manager buffer, you can use these key bindings:
+
+| Key | Action                    |
+|-----+---------------------------|
+| =s= | Start unit               |
+| =S= | Stop unit                |
+| =r= | Restart unit             |
+| =l= | Show logs                |
+| =f= | Open unit file           |
+| =u= | Toggle user mode         |
+| =g= | Refresh buffer           |
+
+*** Interactive Menu
+
+Press any of the action keys to open the transient menu, which provides a visual interface for all available commands.
+
+** Requirements
+
+- Emacs 27.1 or later
+- systemd (obviously!)
+- =systemctl= command available in PATH
+
+** Configuration
+
+The package works out of the box with minimal configuration needed. However, you can customize various aspects:
+
+*** Auto-refresh Delay
+
+Control how long to wait before auto-refreshing the buffer after an action:
+
+#+begin_src emacs-lisp
+(setq systemd-manager--auto-refresh-delay 3) ; Default is 2 seconds
+#+end_src
+
+** Package Structure
+
+The package is organized into several modules:
+
+- =systemd-manager.el= - Main entry point and package definition
+- =systemd-manager--core.el= - Core functionality and systemctl command execution
+- =systemd-manager--ui.el= - User interface and tabulated list display
+- =systemd-manager--actions.el= - Unit control actions (start, stop, restart, etc.)
+- =systemd-manager--transient.el= - Transient menu definitions
+- =systemd-manager--logs.el= - Log viewing functionality
+- =systemd-manager--faces.el= - Face definitions for syntax highlighting
+
+** Contributing
+
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
+
+### Development
+
+To contribute to this project:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+** License
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+See the [[file:LICENSE][LICENSE]] file for the full license text.
+
+** Changelog
+
+*** Version 1.0.0
+- Initial release
+- Basic systemd unit management functionality
+- Tabulated list interface
+- Unit actions (start, stop, restart, enable, disable)
+- Log viewing capabilities
+- User/system unit toggle
+- Transient menu interface
