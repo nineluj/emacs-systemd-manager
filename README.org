@@ -36,20 +36,18 @@ This package is not yet available on MELPA, but you can install it using package
 
 #+begin_src emacs-lisp
 (use-package systemd-manager
-  :straight (:host github :repo "nineluj/emacs-systemd-manager.el"))
+  :straight (:host github :repo "nineluj/systemd-manager.el"))
 #+end_src
 
 ** Usage
-
 *** Basic Usage
-
 Launch the systemd manager interface:
 
 #+begin_src emacs-lisp
 M-x systemd-manager
 #+end_src
 
-This will open a buffer showing all systemd units with their current status.
+This will open a buffer showing all the system systemd units with their current status. To view user units, press =u= or call =M-x systemd-manager--toggle-user-mode=.
 
 *** Key Bindings
 
