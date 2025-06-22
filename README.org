@@ -2,10 +2,9 @@
 #+AUTHOR: nineluj
 #+EMAIL: code@nineluj.com
 
-An Emacs interface for managing systemd units. This package provides a convenient way to view, control, and monitor systemd services from within Emacs.
+An Emacs interface for managing systemd units based on tabulated-mode. This package provides a convenient way to view, control, and monitor systemd services from within Emacs using transient.
 
 ** Features
-
 - 📋 View system and user units in a tabulated list interface
 - 🚀 Start, stop, and restart systemd units
 - ⚙️ Enable and disable units
@@ -86,7 +85,6 @@ Control how long to wait before auto-refreshing the buffer after an action:
 #+end_src
 
 ** Package Structure
-
 The package is organized into several modules:
 
 - =systemd-manager.el= - Main entry point and package definition
@@ -98,11 +96,9 @@ The package is organized into several modules:
 - =systemd-manager--faces.el= - Face definitions for syntax highlighting
 
 ** Contributing
-
 Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
 
-### Development
-
+** Development
 To contribute to this project:
 
 1. Fork the repository
@@ -112,13 +108,15 @@ To contribute to this project:
 5. Submit a pull request
 
 ** License
-
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 See the [[file:LICENSE][LICENSE]] file for the full license text.
 
-** Changelog
+** Desired Enhancements
+- [ ]  Enable tailing logs, and generally make the journalctl view better.
+   Potentially integrate with [[https://github.com/SebastianMeisel/journalctl-mode][SebastianMeisel/journalctl-mode]]?
 
+** Changelog
 *** Version 1.0.0
 - Initial release
 - Basic systemd unit management functionality
