@@ -16,6 +16,7 @@
 
 ;;; Code:
 
+(require 'tramp)
 (require 'json)
 
 ;; Variables
@@ -28,13 +29,23 @@
 (defvar-local systemd-manager--last-units-data nil
   "Cache of the last units data to avoid unnecessary refreshes.")
 
-;; Command building and execution
+(defvar-local systemd-manager--remote-host nil
+  "Remote host for TRAMP connections. If nil, commands run locally.")
+
+;; Helper functions for TRAMP support
+(defun systemd-manager--get-default-directory ()
+  "Get the appropriate default-directory for command execution."
+  (if systemd-manager--remote-host
+      (format "/%s:%s:" tramp-default-method systemd-manager--remote-host)
+    default-directory))
+
 (defun systemd-manager--build-command (action &optional unit)
   "Build a systemctl command string for ACTION and optional UNIT."
   (let ((base-cmd (if systemd-manager--user-mode
                       "systemctl --user"
                     "systemctl"))
         (sudo-prefix (if (and (not systemd-manager--user-mode)
+                              (not systemd-manager--remote-host) ; Don't use sudo with TRAMP
                               (member action '("start" "stop" "restart" "enable" "disable")))
                          "sudo " "")))
     (if unit
@@ -44,16 +55,58 @@
 (defun systemd-manager--execute-command (action &optional unit)
   "Execute a systemctl command for ACTION and optional UNIT.
 Returns the command output as a string."
-  (let ((cmd (systemd-manager--build-command action unit)))
+  (let ((cmd (systemd-manager--build-command action unit))
+        (default-directory (systemd-manager--get-default-directory)))
     (shell-command-to-string cmd)))
 
 (defun systemd-manager--execute-action (action unit &optional success-message)
   "Execute ACTION on UNIT and schedule refresh.
 Shows SUCCESS-MESSAGE if provided, otherwise a default message."
-  (let ((cmd (systemd-manager--build-command action unit)))
+  (let ((cmd (systemd-manager--build-command action unit))
+        (default-directory (systemd-manager--get-default-directory)))
     (shell-command cmd)
-    (message (or success-message (format "%s unit: %s" (capitalize action) unit)))
+    (let ((host-info (if systemd-manager--remote-host 
+                         (format " on %s" systemd-manager--remote-host) 
+                       "")))
+      (message (or success-message
+                   (format "%s unit: %s%s" (capitalize action) unit host-info))))
     (systemd-manager--schedule-refresh)))
+
+(defun systemd-manager--set-remote-host (host)
+  "Set the remote host for systemd operations.
+HOST should be in the format 'user@hostname' or just 'hostname'.
+Set to nil to operate on local system."
+  (interactive "sRemote host (user@hostname or empty for local): ")
+  (setq systemd-manager--remote-host 
+        (if (string-empty-p host) nil host))
+  (message (if systemd-manager--remote-host
+               "Systemd operations will be performed on: %s"
+             "Systemd operations will be performed locally")
+           systemd-manager--remote-host))
+
+(defun systemd-manager--connect-to-host (host)
+  "Connect to a remote HOST for systemd management.
+HOST can be:
+- 'hostname' (uses current user)
+- 'user@hostname' 
+- empty string or nil for local operations"
+  (interactive "sConnect to host (user@hostname, hostname, or empty for local): ")
+  (when (string-empty-p host)
+    (setq host nil))
+  (setq systemd-manager--remote-host host)
+  (when (get-buffer "*Systemd Units*")
+    (with-current-buffer "*Systemd Units*"
+      (systemd-manager--schedule-refresh)))
+  (message "Connected to: %s" (or host "local system")))
+
+(defun systemd-manager--get-connection-info ()
+  "Get current connection information as a string."
+  (if systemd-manager--remote-host
+      (format "Remote: %s%s" 
+              systemd-manager--remote-host
+              (if systemd-manager--user-mode " (user)" " (system)"))
+    (format "Local%s" 
+            (if systemd-manager--user-mode " (user)" " (system)"))))
 
 (defun systemd-manager--schedule-refresh ()
   "Schedule a refresh of the current buffer after a delay."

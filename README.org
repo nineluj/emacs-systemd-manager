@@ -115,6 +115,9 @@ See the [[file:LICENSE][LICENSE]] file for the full license text.
 ** Desired Enhancements
 - [ ]  Enable tailing logs, and generally make the journalctl view better.
    Potentially integrate with [[https://github.com/SebastianMeisel/journalctl-mode][SebastianMeisel/journalctl-mode]]?
+- [ ]  Tramp support. The tested version currently freezes. Maybe I need to use a newer version?
+
+  https://stackoverflow.com/questions/72096374/emacs-doom-how-can-i-debug-hanging-tramp
 
 ** Changelog
 *** Version 1.0.0
